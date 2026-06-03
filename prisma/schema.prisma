@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  passwordHash  String
+  name          String?
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  roles         Role[]
+  refreshTokens RefreshToken[]
+}
+
+model Role {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  description String?
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  users       User[]
+  permissions Permission[]
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  roles       Role[]
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model IdempotencyKey {
+  id              String   @id @default(cuid())
+  key             String
+  method          String
+  path            String
+  scope           String
+  // SHA-256 of the request identity (method, path, body) so a key reused with
+  // a different request is detected as a conflict instead of being replayed.
+  requestHash     String
+  // Lifecycle of the reservation: PENDING while the handler runs, COMPLETED
+  // once the response is persisted. Enables atomic reserve/finalize semantics.
+  status          String   @default("PENDING")
+  // Nullable so a PENDING reservation can exist before the response is known.
+  responseStatus  Int?
+  responseBody    Json?
+  responseHeaders Json?
+  createdAt       DateTime @default(now())
+  expiresAt       DateTime
+
+  @@unique([key, method, path, scope])
+  @@index([expiresAt])
+  @@index([status])
+}
