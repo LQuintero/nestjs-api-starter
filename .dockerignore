@@ -1,0 +1,46 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Build output (will be built inside container)
+dist
+
+# Development files
+.git
+.gitignore
+.env*
+*.log
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Test files
+test
+*.test.ts
+*.spec.ts
+coverage
+
+# Documentation
+*.md
+!README.md
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Prisma generated client (will be regenerated in container)
+src/generated
+
+# Other
+Makefile
+.eslintcache
+
