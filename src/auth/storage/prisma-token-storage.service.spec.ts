@@ -90,6 +90,25 @@ describe('PrismaTokenStorageService', () => {
     await expect(service.findValid('missing')).resolves.toBeNull();
   });
 
+  it('finds a reused revoked token by digest so its user can be invalidated', async () => {
+    const revokedRow = {
+      ...storedRow,
+      revokedAt: new Date(),
+    };
+    prisma.refreshToken.findFirst.mockResolvedValue(revokedRow);
+
+    const result = await service.findRevoked('rotated-token');
+
+    expect(prisma.refreshToken.findFirst).toHaveBeenCalledWith({
+      where: {
+        tokenHash: digest('rotated-token'),
+        revokedAt: { not: null },
+        expiresAt: { gt: expect.any(Date) },
+      },
+    });
+    expect(result).toEqual(revokedRow);
+  });
+
   it('rotates by conditionally revoking the current digest and creating a successor', async () => {
     tx.refreshToken.updateMany.mockResolvedValue({ count: 1 });
     tx.refreshToken.findUniqueOrThrow.mockResolvedValue({ userId: 'user_1' });

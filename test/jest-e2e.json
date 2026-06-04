@@ -6,6 +6,8 @@
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
+  "modulePathIgnorePatterns": ["<rootDir>/dist"],
+  "testPathIgnorePatterns": ["<rootDir>/dist"],
   "moduleNameMapper": {
     "^src/(.*)$": "<rootDir>/src/$1"
   }

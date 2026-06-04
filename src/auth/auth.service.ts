@@ -95,6 +95,12 @@ export class AuthService {
     const stored = await this.tokenStorage.findValid(dto.refreshToken);
 
     if (!stored) {
+      const revoked = await this.tokenStorage.findRevoked(dto.refreshToken);
+
+      if (revoked) {
+        await this.tokenStorage.revokeAllForUser(revoked.userId);
+      }
+
       throw new UnauthorizedException('Invalid refresh token.');
     }
 

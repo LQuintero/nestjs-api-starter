@@ -23,7 +23,13 @@
     "prisma:studio": "prisma studio",
     "prisma:seed": "ts-node prisma/seed.ts"
   },
-  "keywords": ["nestjs", "api", "boilerplate", "prisma", "postgresql"],
+  "keywords": [
+    "nestjs",
+    "api",
+    "boilerplate",
+    "prisma",
+    "postgresql"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -61,6 +67,7 @@
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^8.59.0",
     "@typescript-eslint/parser": "^8.59.0",
+    "dotenv": "^17.4.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",

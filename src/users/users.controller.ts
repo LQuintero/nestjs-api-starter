@@ -22,7 +22,6 @@ import {
 import { PaginationQueryDto } from '../common/dto/pagination.dto';
 import { PermissionsGuard } from '../common/guards/permissions.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RequirePermissions } from '../roles/decorators/permissions.decorator';
 import { Roles } from '../roles/decorators/roles.decorator';
 import { UpdateCurrentUserDto } from './dto/update-current-user.dto';
@@ -33,13 +32,13 @@ import {
 } from './dto/user-response.dto';
 import { UsersService } from './users.service';
 
-// JwtAuthGuard authenticates every request and populates `request.user`. The
-// `/me` routes carry no role/permission metadata, so RolesGuard and
-// PermissionsGuard pass through for them; admin routes add @Roles/@Require-
-// Permissions which those guards then enforce.
+// The global JwtAuthGuard authenticates every request and populates
+// `request.user`. The `/me` routes carry no role/permission metadata, so
+// RolesGuard and PermissionsGuard pass through for them; admin routes add
+// @Roles/@RequirePermissions which those guards then enforce.
 @ApiTags('users')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
+@UseGuards(RolesGuard, PermissionsGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

@@ -5,7 +5,7 @@ import { AppModule } from '../src/app.module';
 import { prepareE2eDatabase } from './e2e-database';
 
 describe('App (e2e)', () => {
-  let app: INestApplication;
+  let app: INestApplication | undefined;
 
   beforeAll(async () => {
     prepareE2eDatabase();
@@ -26,17 +26,17 @@ describe('App (e2e)', () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    await app?.close();
   });
 
   it('GET /health/live returns 200', async () => {
-    await request(app.getHttpServer()).get('/health/live').expect(200).expect({
+    await request(app!.getHttpServer()).get('/health/live').expect(200).expect({
       status: 'ok',
     });
   });
 
   it('GET /health/ready returns 200 when database is available', async () => {
-    await request(app.getHttpServer())
+    await request(app!.getHttpServer())
       .get('/health/ready')
       .expect(200)
       .expect({
@@ -48,7 +48,7 @@ describe('App (e2e)', () => {
   it('POST /auth/register creates a user and returns tokens', async () => {
     const email = `user-${Date.now()}@example.com`;
 
-    const response = await request(app.getHttpServer())
+    const response = await request(app!.getHttpServer())
       .post('/auth/register')
       .send({
         email,
@@ -65,17 +65,17 @@ describe('App (e2e)', () => {
     const email = `login-${Date.now()}@example.com`;
     const password = 'password-123';
 
-    await request(app.getHttpServer())
+    await request(app!.getHttpServer())
       .post('/auth/register')
       .send({ email, password })
       .expect(201);
 
-    const login = await request(app.getHttpServer())
+    const login = await request(app!.getHttpServer())
       .post('/auth/login')
       .send({ email, password })
       .expect(200);
 
-    const me = await request(app.getHttpServer())
+    const me = await request(app!.getHttpServer())
       .get('/auth/me')
       .set('Authorization', `Bearer ${login.body.accessToken}`)
       .expect(200);
@@ -88,12 +88,12 @@ describe('App (e2e)', () => {
     const email = `refresh-${Date.now()}@example.com`;
     const password = 'password-123';
 
-    const registered = await request(app.getHttpServer())
+    const registered = await request(app!.getHttpServer())
       .post('/auth/register')
       .send({ email, password })
       .expect(201);
 
-    const refreshed = await request(app.getHttpServer())
+    const refreshed = await request(app!.getHttpServer())
       .post('/auth/refresh')
       .send({ refreshToken: registered.body.refreshToken })
       .expect(200);
@@ -102,20 +102,20 @@ describe('App (e2e)', () => {
     expect(refreshed.body.refreshToken).toEqual(expect.any(String));
     expect(refreshed.body.refreshToken).not.toBe(registered.body.refreshToken);
 
-    await request(app.getHttpServer())
+    await request(app!.getHttpServer())
       .post('/auth/logout')
       .set('Authorization', `Bearer ${refreshed.body.accessToken}`)
       .send({ refreshToken: refreshed.body.refreshToken })
       .expect(204);
 
-    await request(app.getHttpServer())
+    await request(app!.getHttpServer())
       .post('/auth/refresh')
       .send({ refreshToken: refreshed.body.refreshToken })
       .expect(401);
   });
 
   it('GET /users is admin-protected', async () => {
-    const adminLogin = await request(app.getHttpServer())
+    const adminLogin = await request(app!.getHttpServer())
       .post('/auth/login')
       .send({
         email: process.env.SEED_ADMIN_EMAIL ?? 'admin@example.com',
@@ -123,7 +123,7 @@ describe('App (e2e)', () => {
       })
       .expect(200);
 
-    await request(app.getHttpServer())
+    await request(app!.getHttpServer())
       .get('/users')
       .set('Authorization', `Bearer ${adminLogin.body.accessToken}`)
       .expect(200)

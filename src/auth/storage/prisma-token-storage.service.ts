@@ -44,6 +44,18 @@ export class PrismaTokenStorageService implements TokenStorageService {
     return record ? this.toStored(record) : null;
   }
 
+  async findRevoked(token: string): Promise<StoredRefreshToken | null> {
+    const record = await this.prisma.refreshToken.findFirst({
+      where: {
+        tokenHash: this.digestToken(token),
+        revokedAt: { not: null },
+        expiresAt: { gt: new Date() },
+      },
+    });
+
+    return record ? this.toStored(record) : null;
+  }
+
   async rotate(input: RotateRefreshTokenInput): Promise<StoredRefreshToken> {
     const currentHash = this.digestToken(input.currentToken);
 

@@ -31,6 +31,7 @@ export const TOKEN_STORAGE = Symbol('TOKEN_STORAGE');
 export interface TokenStorageService {
   create(input: CreateRefreshTokenInput): Promise<StoredRefreshToken>;
   findValid(token: string): Promise<StoredRefreshToken | null>;
+  findRevoked(token: string): Promise<StoredRefreshToken | null>;
   rotate(input: RotateRefreshTokenInput): Promise<StoredRefreshToken>;
   revoke(token: string, userId: string): Promise<void>;
   revokeAllForUser(userId: string): Promise<void>;

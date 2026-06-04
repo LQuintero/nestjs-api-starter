@@ -9,7 +9,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../common/guards/permissions.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { RequirePermissions } from './decorators/permissions.decorator';
@@ -19,12 +18,12 @@ import { ListQueryDto } from './dto/list-query.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { RolesService } from './roles.service';
 
-// JwtAuthGuard runs first to authenticate the request, then RolesGuard and
+// The global JwtAuthGuard authenticates first, then RolesGuard and
 // PermissionsGuard enforce admin-only access.
 @ApiTags('roles')
 @ApiBearerAuth()
 @Roles('admin')
-@UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
+@UseGuards(RolesGuard, PermissionsGuard)
 @Controller('roles')
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}

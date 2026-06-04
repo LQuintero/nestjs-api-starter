@@ -15,6 +15,7 @@ import { RolesModule } from './roles/roles.module';
 import { IdempotencyModule } from './idempotency/idempotency.module';
 import { IdempotencyInterceptor } from './idempotency/idempotency.interceptor';
 import { HealthModule } from './health/health.module';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -54,6 +55,12 @@ import { HealthModule } from './health/health.module';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      // Reuse the JwtAuthGuard instance exported by the global AuthModule so its
+      // JwtService/UsersService dependencies resolve from that module's context.
+      provide: APP_GUARD,
+      useExisting: JwtAuthGuard,
     },
     {
       provide: APP_FILTER,

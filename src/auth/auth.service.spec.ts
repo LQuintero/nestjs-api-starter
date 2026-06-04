@@ -35,6 +35,7 @@ describe('AuthService', () => {
     tokenStorage = {
       create: jest.fn().mockResolvedValue(undefined),
       findValid: jest.fn(),
+      findRevoked: jest.fn(),
       rotate: jest.fn().mockResolvedValue(undefined),
       revoke: jest.fn().mockResolvedValue(undefined),
       revokeAllForUser: jest.fn().mockResolvedValue(undefined),
@@ -160,10 +161,28 @@ describe('AuthService', () => {
 
   it('rejects refresh when the stored token is invalid', async () => {
     tokenStorage.findValid.mockResolvedValue(null);
+    tokenStorage.findRevoked.mockResolvedValue(null);
 
     await expect(
       service.refresh({ refreshToken: 'missing' }),
     ).rejects.toBeInstanceOf(UnauthorizedException);
+    expect(tokenStorage.rotate).not.toHaveBeenCalled();
+  });
+
+  it('revokes all user tokens when a revoked refresh token is reused', async () => {
+    tokenStorage.findValid.mockResolvedValue(null);
+    tokenStorage.findRevoked.mockResolvedValue({
+      id: 'token_1',
+      userId: 'user_1',
+      expiresAt: new Date(Date.now() + 60_000),
+      revokedAt: new Date(),
+    });
+
+    await expect(
+      service.refresh({ refreshToken: 'rotated-token' }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+
+    expect(tokenStorage.revokeAllForUser).toHaveBeenCalledWith('user_1');
     expect(tokenStorage.rotate).not.toHaveBeenCalled();
   });
 
