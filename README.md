@@ -2,6 +2,21 @@
 
 Reusable NestJS API starter with JWT auth, full RBAC, PostgreSQL, Prisma, Swagger, Docker, idempotency, structured logging, health checks, pagination helpers, testing, and GitHub Actions.
 
+    Client
+      |
+    NestJS API
+      |
+    +----------------------+
+    | Auth                 |
+    | RBAC                 |
+    | Idempotency          |
+    | Validation           |
+    +----------------------+
+      |
+    Prisma
+      |
+    PostgreSQL
+
 ## Features
 
 - JWT access tokens and refresh token rotation
