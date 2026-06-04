@@ -86,8 +86,6 @@ npm run prisma:seed
 npm run start:dev
 ```
 
-Swagger: [http://localhost:3000/docs](http://localhost:3000/docs)
-
 ## Environment variables
 
 See `.env.example` for the full list. Required values:
