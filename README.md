@@ -19,17 +19,28 @@ Reusable NestJS API starter with JWT auth, full RBAC, PostgreSQL, Prisma, Swagge
 
 ## Features
 
-- JWT access tokens and refresh token rotation
-- Users, roles, and permissions (many-to-many RBAC)
-- PostgreSQL + Prisma 7
-- Swagger docs at `/docs`
-- Request validation and RFC7807-style problem details
-- Global rate limiting (`@nestjs/throttler`)
-- Structured logging (`nestjs-pino`)
-- Health checks (`/health/live`, `/health/ready`)
-- Idempotency keys with pluggable storage
-- Pagination helpers
-- Docker Compose for local development
+### Security
+- JWT authentication
+- Refresh token rotation
+- RBAC (users, roles, permissions)
+- Rate limiting
+
+### API Quality
+- Request validation
+- RFC7807 problem details
+- Swagger/OpenAPI
+
+### Infrastructure
+- PostgreSQL
+- Prisma
+- Docker Compose
+- GitHub Actions CI
+
+### Reliability
+- Idempotency keys
+- Structured logging
+- Health checks
+- Pagination helpersl development
 - GitHub Actions CI
 
 ## API Documentation
