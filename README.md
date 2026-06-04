@@ -17,6 +17,12 @@ Reusable NestJS API starter with JWT auth, full RBAC, PostgreSQL, Prisma, Swagge
 - Docker Compose for local development
 - GitHub Actions CI
 
+## API Documentation
+
+Interactive OpenAPI documentation is available at `/docs`.
+
+![Swagger UI](./assets/swagger-ui.png)
+
 ## Local setup
 
 1. Install Node from `.nvmrc`:
