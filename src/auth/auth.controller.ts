@@ -62,8 +62,11 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Revoke the presented refresh token' })
   @ApiNoContentResponse()
-  logout(@Body() dto: RefreshTokenDto): Promise<void> {
-    return this.authService.logout(dto.refreshToken);
+  logout(
+    @CurrentUser() user: AuthenticatedRequestUser,
+    @Body() dto: RefreshTokenDto,
+  ): Promise<void> {
+    return this.authService.logout(dto.refreshToken, user.id);
   }
 
   @Get('me')

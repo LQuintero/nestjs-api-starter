@@ -32,7 +32,7 @@ async function main() {
   }
 
   const adminEmail = process.env.SEED_ADMIN_EMAIL ?? 'admin@example.com';
-  const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? 'change-me';
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? 'change-me-password';
   const adminName = process.env.SEED_ADMIN_NAME ?? 'Admin';
 
   const permissionRecords = await Promise.all(

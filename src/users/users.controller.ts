@@ -94,7 +94,7 @@ export class UsersController {
   @Roles('admin')
   @RequirePermissions('users:write')
   @ApiOperation({ summary: 'Update a user (admin)' })
-  @ApiOkResponse({ type: UserResponseDto })
+  @ApiOkResponse({ type: UserProfileResponseDto })
   updateUser(@Param('id') id: string, @Body() dto: UpdateUserDto) {
     return this.usersService.updateUser(id, dto);
   }

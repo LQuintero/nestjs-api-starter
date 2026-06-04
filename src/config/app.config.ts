@@ -6,5 +6,9 @@ export default registerAs('app', () => ({
   throttleTtl: Number(process.env.THROTTLE_TTL ?? 60),
   throttleLimit: Number(process.env.THROTTLE_LIMIT ?? 100),
   idempotencyTtlSeconds: Number(process.env.IDEMPOTENCY_TTL_SECONDS ?? 86400),
+  corsOrigins: (process.env.CORS_ORIGINS ?? '')
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean),
   logLevel: process.env.LOG_LEVEL ?? 'info',
 }));

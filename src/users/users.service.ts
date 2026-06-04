@@ -123,7 +123,7 @@ export class UsersService {
     return toPaginatedResponse(data, meta);
   }
 
-  async updateUser(id: string, input: UpdateUserDto): Promise<SafeUser> {
+  async updateUser(id: string, input: UpdateUserDto): Promise<UserProfile> {
     await this.ensureUserExists(id);
 
     const data: Prisma.UserUpdateInput = {
@@ -136,7 +136,7 @@ export class UsersService {
 
     const user = await this.prisma.user.update({ where: { id }, data });
 
-    return this.toSafeUser(user);
+    return this.toUserProfile(user);
   }
 
   /**

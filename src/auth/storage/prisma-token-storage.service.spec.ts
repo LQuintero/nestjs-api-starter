@@ -147,14 +147,14 @@ describe('PrismaTokenStorageService', () => {
     expect(tx.refreshToken.create).not.toHaveBeenCalled();
   });
 
-  it('revokes by digest + unrevoked without a scan or findValid', async () => {
+  it('revokes only the token matching both digest and userId', async () => {
     prisma.refreshToken.updateMany.mockResolvedValue({ count: 1 });
 
-    await service.revoke('old-token');
+    await service.revoke('old-token', 'user_1');
 
     expect(prisma.refreshToken.findFirst).not.toHaveBeenCalled();
     expect(prisma.refreshToken.updateMany).toHaveBeenCalledWith({
-      where: { tokenHash: digest('old-token'), revokedAt: null },
+      where: { tokenHash: digest('old-token'), revokedAt: null, userId: 'user_1' },
       data: { revokedAt: expect.any(Date) },
     });
   });

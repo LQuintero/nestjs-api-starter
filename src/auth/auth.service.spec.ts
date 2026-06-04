@@ -167,9 +167,47 @@ describe('AuthService', () => {
     expect(tokenStorage.rotate).not.toHaveBeenCalled();
   });
 
-  it('revokes refresh tokens on logout', async () => {
-    await service.logout('some-refresh-token');
+  it('logout passes userId to tokenStorage so only the caller can revoke their own token', async () => {
+    await service.logout('some-refresh-token', 'user_1');
 
-    expect(tokenStorage.revoke).toHaveBeenCalledWith('some-refresh-token');
+    expect(tokenStorage.revoke).toHaveBeenCalledWith('some-refresh-token', 'user_1');
+  });
+
+  it('returns Invalid credentials for inactive accounts to prevent enumeration', async () => {
+    usersService.findByEmail.mockResolvedValue({
+      id: 'user_1',
+      email: 'user@example.com',
+      passwordHash: 'stored-hash',
+      isActive: false,
+    });
+
+    const error = await service
+      .login({ email: 'user@example.com', password: 'password123' })
+      .catch((e: unknown) => e);
+
+    expect(error).toBeInstanceOf(UnauthorizedException);
+    expect((error as UnauthorizedException).message).toBe('Invalid credentials.');
+  });
+
+  it('does not rotate the refresh token if access token signing fails', async () => {
+    tokenStorage.findValid.mockResolvedValue({
+      id: 'token_1',
+      userId: 'user_1',
+      expiresAt: new Date(Date.now() + 60_000),
+      revokedAt: null,
+    });
+    usersService.findById.mockResolvedValue({
+      id: 'user_1',
+      email: 'user@example.com',
+      passwordHash: 'stored-hash',
+      isActive: true,
+    });
+    jwtService.signAsync.mockRejectedValue(new Error('signing failed'));
+
+    await expect(service.refresh({ refreshToken: 'old-token' })).rejects.toThrow(
+      'signing failed',
+    );
+
+    expect(tokenStorage.rotate).not.toHaveBeenCalled();
   });
 });

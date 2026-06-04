@@ -86,9 +86,9 @@ export class PrismaTokenStorageService implements TokenStorageService {
     });
   }
 
-  async revoke(token: string): Promise<void> {
+  async revoke(token: string, userId: string): Promise<void> {
     await this.prisma.refreshToken.updateMany({
-      where: { tokenHash: this.digestToken(token), revokedAt: null },
+      where: { tokenHash: this.digestToken(token), revokedAt: null, userId },
       data: { revokedAt: new Date() },
     });
   }

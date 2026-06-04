@@ -32,6 +32,6 @@ export interface TokenStorageService {
   create(input: CreateRefreshTokenInput): Promise<StoredRefreshToken>;
   findValid(token: string): Promise<StoredRefreshToken | null>;
   rotate(input: RotateRefreshTokenInput): Promise<StoredRefreshToken>;
-  revoke(token: string): Promise<void>;
+  revoke(token: string, userId: string): Promise<void>;
   revokeAllForUser(userId: string): Promise<void>;
 }

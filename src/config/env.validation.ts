@@ -13,8 +13,9 @@ export const envSchema = z.object({
   THROTTLE_LIMIT: z.coerce.number().int().positive().default(100),
   IDEMPOTENCY_TTL_SECONDS: z.coerce.number().int().positive().default(86400),
   SEED_ADMIN_EMAIL: z.string().email().default('admin@example.com'),
-  SEED_ADMIN_PASSWORD: z.string().min(8).default('change-me'),
+  SEED_ADMIN_PASSWORD: z.string().min(8).default('change-me-password'),
   SEED_ADMIN_NAME: z.string().default('Admin'),
+  CORS_ORIGINS: z.string().default(''),
   LOG_LEVEL: z.string().default('info'),
 });
 

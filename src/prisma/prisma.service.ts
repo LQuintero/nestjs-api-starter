@@ -7,14 +7,8 @@ export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
-  constructor() {
-    // Prisma 7 requires a driver adapter at runtime. The connection string is
-    // read from DATABASE_URL (validated in env.validation.ts).
-    super({
-      adapter: new PrismaPg({
-        connectionString: process.env.DATABASE_URL as string,
-      }),
-    });
+  constructor(connectionString: string) {
+    super({ adapter: new PrismaPg({ connectionString }) });
   }
 
   async onModuleInit() {

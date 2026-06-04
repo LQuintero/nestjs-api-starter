@@ -11,6 +11,9 @@ async function bootstrap() {
 
   app.useLogger(app.get(Logger));
 
+  const configService = app.get(ConfigService);
+  const nodeEnv = configService.get<string>('app.nodeEnv') ?? 'development';
+
   // Keep Helmet enabled, but relax the default CSP so the Swagger UI at /docs
   // can load its inline scripts/styles and bundled assets. The defaults block
   // inline scripts/styles, which breaks Swagger UI.
@@ -27,7 +30,12 @@ async function bootstrap() {
       },
     }),
   );
-  app.enableCors();
+
+  const corsOrigins = configService.get<string[]>('app.corsOrigins') ?? [];
+  app.enableCors({
+    origin: corsOrigins.length > 0 ? corsOrigins : false,
+    credentials: true,
+  });
 
   // Ensure onModuleDestroy hooks (e.g. Prisma $disconnect) run on SIGTERM/SIGINT.
   app.enableShutdownHooks();
@@ -40,16 +48,17 @@ async function bootstrap() {
     }),
   );
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('NestJS API')
-    .setDescription('NestJS API boilerplate')
-    .setVersion('1.0.0')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('docs', app, document);
+  if (nodeEnv !== 'production') {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('NestJS API')
+      .setDescription('NestJS API boilerplate')
+      .setVersion('1.0.0')
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('docs', app, document);
+  }
 
-  const configService = app.get(ConfigService);
   const port = configService.get<number>('app.port') ?? 3000;
 
   await app.listen(port);

@@ -85,7 +85,7 @@ export class AuthService {
     }
 
     if (!user.isActive) {
-      throw new UnauthorizedException('Account is inactive.');
+      throw new UnauthorizedException('Invalid credentials.');
     }
 
     return this.issueTokenPair(user.id, user.email);
@@ -105,19 +105,22 @@ export class AuthService {
     }
 
     const nextToken = this.generateRefreshToken();
+
+    // Sign the access token before rotating so a signing failure never leaves
+    // the client with a rotated-but-undelivered refresh token.
+    const accessToken = await this.signAccessToken(user.id, user.email);
+
     await this.tokenStorage.rotate({
       currentToken: dto.refreshToken,
       nextToken,
       expiresAt: this.refreshTokenExpiry(),
     });
 
-    const accessToken = await this.signAccessToken(user.id, user.email);
-
     return { accessToken, refreshToken: nextToken };
   }
 
-  async logout(refreshToken: string): Promise<void> {
-    await this.tokenStorage.revoke(refreshToken);
+  async logout(refreshToken: string, userId: string): Promise<void> {
+    await this.tokenStorage.revoke(refreshToken, userId);
   }
 
   me(userId: string): Promise<UserProfile> {
