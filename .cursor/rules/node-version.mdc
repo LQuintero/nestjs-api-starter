@@ -6,5 +6,5 @@ alwaysApply: true
 # Node version
 
 - **Before any npm, npx, or node command**, run: `nvm use`
-- The project uses the version in `.nvmrc` (e.g. v20.19.0). Do not run `npm install`, `npx prisma generate`, `npm run build`, etc. without first running `nvm use`.
+- The project uses the version in `.nvmrc` (e.g. v24.19.0). Do not run `npm install`, `npx prisma generate`, `npm run build`, etc. without first running `nvm use`.
 - In scripts and CI, use `nvm use` (or ensure the correct Node version is active) before invoking npm/npx.
