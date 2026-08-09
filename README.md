@@ -40,8 +40,7 @@ Reusable NestJS API starter with JWT auth, full RBAC, PostgreSQL, Prisma, Swagge
 - Idempotency keys
 - Structured logging
 - Health checks
-- Pagination helpersl development
-- GitHub Actions CI
+- Pagination helpers
 
 ## API Documentation
 
